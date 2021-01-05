@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.newfuction.mapper.XinProMapper">
+    
+    <resultMap type="XinPro" id="XinProResult">
+        <result property="proId"    column="pro_ID"    />
+        <result property="proName"    column="pro_name"    />
+        <result property="proPrice"    column="pro_price"    />
+        <result property="proType"    column="pro_type"    />
+        <result property="proText"    column="pro_text"    />
+    </resultMap>
+
+    <sql id="selectXinProVo">
+        select pro_ID, pro_name, pro_price, pro_type, pro_text from xin_pro
+    </sql>
+
+    <select id="selectXinProList" parameterType="XinPro" resultMap="XinProResult">
+        <include refid="selectXinProVo"/>
+        <where>  
+            <if test="proName != null  and proName != ''"> and pro_name like concat('%', #{proName}, '%')</if>
+            <if test="proPrice != null "> and pro_price = #{proPrice}</if>
+            <if test="proType != null  and proType != ''"> and pro_type = #{proType}</if>
+            <if test="proText != null  and proText != ''"> and pro_text = #{proText}</if>
+        </where>
+    </select>
+    
+    <select id="selectXinProById" parameterType="Long" resultMap="XinProResult">
+        <include refid="selectXinProVo"/>
+        where pro_ID = #{proId}
+    </select>
+        
+    <insert id="insertXinPro" parameterType="XinPro" useGeneratedKeys="true" keyProperty="proId">
+        insert into xin_pro
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="proName != null">pro_name,</if>
+            <if test="proPrice != null">pro_price,</if>
+            <if test="proType != null">pro_type,</if>
+            <if test="proText != null">pro_text,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="proName != null">#{proName},</if>
+            <if test="proPrice != null">#{proPrice},</if>
+            <if test="proType != null">#{proType},</if>
+            <if test="proText != null">#{proText},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXinPro" parameterType="XinPro">
+        update xin_pro
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="proName != null">pro_name = #{proName},</if>
+            <if test="proPrice != null">pro_price = #{proPrice},</if>
+            <if test="proType != null">pro_type = #{proType},</if>
+            <if test="proText != null">pro_text = #{proText},</if>
+        </trim>
+        where pro_ID = #{proId}
+    </update>
+
+    <delete id="deleteXinProById" parameterType="Long">
+        delete from xin_pro where pro_ID = #{proId}
+    </delete>
+
+    <delete id="deleteXinProByIds" parameterType="String">
+        delete from xin_pro where pro_ID in 
+        <foreach item="proId" collection="array" open="(" separator="," close=")">
+            #{proId}
+        </foreach>
+    </delete>
+
+</mapper>
