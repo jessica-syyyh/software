@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.funcmem.mapper.XinMemMapper">
+    
+    <resultMap type="XinMem" id="XinMemResult">
+        <result property="memId"    column="mem_ID"    />
+        <result property="memName"    column="mem_name"    />
+        <result property="memSex"    column="mem_sex"    />
+        <result property="memAddress"    column="mem_address"    />
+        <result property="memPhone"    column="mem_phone"    />
+        <result property="memIdcard"    column="mem_idcard"    />
+        <result property="memJob"    column="mem_job"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectXinMemVo">
+        select mem_ID, mem_name, mem_sex, mem_address, mem_phone, mem_idcard, mem_job, create_by, create_time, update_by, update_time, remark from xin_mem
+    </sql>
+
+	
+  <!--/查询产品/-->
+  <select id="queryList" resultMap="XinMemResult">
+    select A.mem_ID,A.mem_name
+    from  XinMem A
+  </select>
+
+    <select id="selectXinMemList" parameterType="XinMem" resultMap="XinMemResult">
+        <include refid="selectXinMemVo"/>
+        <where>  
+            <if test="memName != null  and memName != ''"> and mem_name like concat('%', #{memName}, '%')</if>
+            <if test="memSex != null  and memSex != ''"> and mem_sex = #{memSex}</if>
+            <if test="memAddress != null  and memAddress != ''"> and mem_address = #{memAddress}</if>
+            <if test="memPhone != null "> and mem_phone = #{memPhone}</if>
+            <if test="memIdcard != null "> and mem_idcard = #{memIdcard}</if>
+            <if test="memJob != null  and memJob != ''"> and mem_job = #{memJob}</if>
+        </where>
+    </select>
+    
+    <select id="selectXinMemById" parameterType="Long" resultMap="XinMemResult">
+        <include refid="selectXinMemVo"/>
+        where mem_ID = #{memId}
+    </select>
+        
+    <insert id="insertXinMem" parameterType="XinMem" useGeneratedKeys="true" keyProperty="memId">
+        insert into xin_mem
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="memName != null">mem_name,</if>
+            <if test="memSex != null">mem_sex,</if>
+            <if test="memAddress != null">mem_address,</if>
+            <if test="memPhone != null">mem_phone,</if>
+            <if test="memIdcard != null">mem_idcard,</if>
+            <if test="memJob != null">mem_job,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="memName != null">#{memName},</if>
+            <if test="memSex != null">#{memSex},</if>
+            <if test="memAddress != null">#{memAddress},</if>
+            <if test="memPhone != null">#{memPhone},</if>
+            <if test="memIdcard != null">#{memIdcard},</if>
+            <if test="memJob != null">#{memJob},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXinMem" parameterType="XinMem">
+        update xin_mem
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="memName != null">mem_name = #{memName},</if>
+            <if test="memSex != null">mem_sex = #{memSex},</if>
+            <if test="memAddress != null">mem_address = #{memAddress},</if>
+            <if test="memPhone != null">mem_phone = #{memPhone},</if>
+            <if test="memIdcard != null">mem_idcard = #{memIdcard},</if>
+            <if test="memJob != null">mem_job = #{memJob},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where mem_ID = #{memId}
+    </update>
+
+    <delete id="deleteXinMemById" parameterType="Long">
+        delete from xin_mem where mem_ID = #{memId}
+    </delete>
+
+    <delete id="deleteXinMemByIds" parameterType="String">
+        delete from xin_mem where mem_ID in 
+        <foreach item="memId" collection="array" open="(" separator="," close=")">
+            #{memId}
+        </foreach>
+    </delete>
+
+</mapper>
