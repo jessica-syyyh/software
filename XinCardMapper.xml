@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.funccard.mapper.XinCardMapper">
+    
+    <resultMap type="XinCard" id="XinCardResult">
+        <result property="cardId"    column="card_ID"    />
+        <result property="memId"    column="mem_ID"    />
+        <result property="cardLevel"    column="card_level"    />
+        <result property="cardMoney"    column="card_money"    />
+        <result property="cardCreateBy"    column="card_create_by"    />
+        <result property="cardCreateTime"    column="card_create_time"    />
+        <result property="cardUpdateBy"    column="card_update_by"    />
+        <result property="cardUpdateTime"    column="card_update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap id="XinCardXinMemResult" type="XinCard" extends="XinCardResult">
+        <collection property="xinMemList" notNullColumn="mem_ID" javaType="java.util.List" resultMap="XinMemResult" />
+    </resultMap>
+
+    <resultMap type="XinMem" id="XinMemResult">
+        <result property="memId"    column="mem_ID"    />
+        <result property="memName"    column="mem_name"    />
+        <result property="memSex"    column="mem_sex"    />
+        <result property="memAddress"    column="mem_address"    />
+        <result property="memPhone"    column="mem_phone"    />
+        <result property="memIdcard"    column="mem_idcard"    />
+        <result property="memJob"    column="mem_job"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectXinCardVo">
+        select card_ID, mem_ID, card_level, card_money, card_create_by, card_create_time, card_update_by, card_update_time, remark from xin_card
+    </sql>
+
+    <select id="selectXinCardList" parameterType="XinCard" resultMap="XinCardResult">
+        <include refid="selectXinCardVo"/>
+        <where>  
+            <if test="memId != null "> and mem_ID = #{memId}</if>
+            <if test="cardLevel != null "> and card_level = #{cardLevel}</if>
+            <if test="cardMoney != null "> and card_money = #{cardMoney}</if>
+            <if test="cardCreateBy != null  and cardCreateBy != ''"> and card_create_by = #{cardCreateBy}</if>
+            <if test="cardCreateTime != null "> and card_create_time = #{cardCreateTime}</if>
+            <if test="cardUpdateBy != null  and cardUpdateBy != ''"> and card_update_by = #{cardUpdateBy}</if>
+            <if test="cardUpdateTime != null "> and card_update_time = #{cardUpdateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectXinCardById" parameterType="Long" resultMap="XinCardXinMemResult">
+        select a.card_ID, a.mem_ID, a.card_level, a.card_money, a.card_create_by, a.card_create_time, a.card_update_by, a.card_update_time, a.remark,
+            b.mem_ID, b.mem_name, b.mem_sex, b.mem_address, b.mem_phone, b.mem_idcard, b.mem_job, b.create_by, b.create_time, b.update_by, b.update_time, b.remark
+        from xin_card a
+        left join xin_mem b on b.mem_ID = a.card_ID
+        where a.card_ID = #{cardId}
+    </select>
+        
+    <insert id="insertXinCard" parameterType="XinCard" useGeneratedKeys="true" keyProperty="cardId">
+        insert into xin_card
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="memId != null">mem_ID,</if>
+            <if test="cardLevel != null">card_level,</if>
+            <if test="cardMoney != null">card_money,</if>
+            <if test="cardCreateBy != null">card_create_by,</if>
+            <if test="cardCreateTime != null">card_create_time,</if>
+            <if test="cardUpdateBy != null">card_update_by,</if>
+            <if test="cardUpdateTime != null">card_update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="memId != null">#{memId},</if>
+            <if test="cardLevel != null">#{cardLevel},</if>
+            <if test="cardMoney != null">#{cardMoney},</if>
+            <if test="cardCreateBy != null">#{cardCreateBy},</if>
+            <if test="cardCreateTime != null">#{cardCreateTime},</if>
+            <if test="cardUpdateBy != null">#{cardUpdateBy},</if>
+            <if test="cardUpdateTime != null">#{cardUpdateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXinCard" parameterType="XinCard">
+        update xin_card
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="memId != null">mem_ID = #{memId},</if>
+            <if test="cardLevel != null">card_level = #{cardLevel},</if>
+            <if test="cardMoney != null">card_money = #{cardMoney},</if>
+            <if test="cardCreateBy != null">card_create_by = #{cardCreateBy},</if>
+            <if test="cardCreateTime != null">card_create_time = #{cardCreateTime},</if>
+            <if test="cardUpdateBy != null">card_update_by = #{cardUpdateBy},</if>
+            <if test="cardUpdateTime != null">card_update_time = #{cardUpdateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where card_ID = #{cardId}
+    </update>
+
+    <delete id="deleteXinCardById" parameterType="Long">
+        delete from xin_card where card_ID = #{cardId}
+    </delete>
+
+    <delete id="deleteXinCardByIds" parameterType="String">
+        delete from xin_card where card_ID in 
+        <foreach item="cardId" collection="array" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteXinMemByMemIds" parameterType="String">
+        delete from xin_mem where mem_ID in 
+        <foreach item="memId" collection="array" open="(" separator="," close=")">
+            #{memId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteXinMemByMemId" parameterType="Long">
+        delete from xin_mem where mem_ID = #{memId}
+    </delete>
+
+    <insert id="batchXinMem">
+        insert into xin_mem( mem_ID, mem_name, mem_sex, mem_address, mem_phone, mem_idcard, mem_job, create_by, create_time, update_by, update_time, remark) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.memId}, #{item.memName}, #{item.memSex}, #{item.memAddress}, #{item.memPhone}, #{item.memIdcard}, #{item.memJob}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+
+</mapper>
