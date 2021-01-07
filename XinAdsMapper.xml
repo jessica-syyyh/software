@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.funcads.mapper.XinAdsMapper">
+    
+    <resultMap type="XinAds" id="XinAdsResult">
+        <result property="adsId"    column="ads_ID"    />
+        <result property="locId"    column="loc_ID"    />
+        <result property="adsType"    column="ads_type"    />
+        <result property="adsDetails"    column="ads_details"    />
+        <result property="adsLength"    column="ads_length"    />
+        <result property="adsStart"    column="ads_start"    />
+        <result property="adsRemark"    column="ads_remark"    />
+    </resultMap>
+
+    <sql id="selectXinAdsVo">
+        select ads_ID, loc_ID, ads_type, ads_details, ads_length, ads_start, ads_remark from xin_ads
+    </sql>
+
+    <select id="selectXinAdsList" parameterType="XinAds" resultMap="XinAdsResult">
+        <include refid="selectXinAdsVo"/>
+        <where>  
+            <if test="locId != null "> and loc_ID = #{locId}</if>
+            <if test="adsType != null  and adsType != ''"> and ads_type = #{adsType}</if>
+            <if test="adsDetails != null  and adsDetails != ''"> and ads_details = #{adsDetails}</if>
+            <if test="adsLength != null "> and ads_length = #{adsLength}</if>
+            <if test="adsStart != null "> and ads_start = #{adsStart}</if>
+            <if test="adsRemark != null  and adsRemark != ''"> and ads_remark = #{adsRemark}</if>
+        </where>
+    </select>
+    
+    <select id="selectXinAdsById" parameterType="Long" resultMap="XinAdsResult">
+        <include refid="selectXinAdsVo"/>
+        where ads_ID = #{adsId}
+    </select>
+        
+    <insert id="insertXinAds" parameterType="XinAds" useGeneratedKeys="true" keyProperty="adsId">
+        insert into xin_ads
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="locId != null">loc_ID,</if>
+            <if test="adsType != null">ads_type,</if>
+            <if test="adsDetails != null">ads_details,</if>
+            <if test="adsLength != null">ads_length,</if>
+            <if test="adsStart != null">ads_start,</if>
+            <if test="adsRemark != null">ads_remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="locId != null">#{locId},</if>
+            <if test="adsType != null">#{adsType},</if>
+            <if test="adsDetails != null">#{adsDetails},</if>
+            <if test="adsLength != null">#{adsLength},</if>
+            <if test="adsStart != null">#{adsStart},</if>
+            <if test="adsRemark != null">#{adsRemark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXinAds" parameterType="XinAds">
+        update xin_ads
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="locId != null">loc_ID = #{locId},</if>
+            <if test="adsType != null">ads_type = #{adsType},</if>
+            <if test="adsDetails != null">ads_details = #{adsDetails},</if>
+            <if test="adsLength != null">ads_length = #{adsLength},</if>
+            <if test="adsStart != null">ads_start = #{adsStart},</if>
+            <if test="adsRemark != null">ads_remark = #{adsRemark},</if>
+        </trim>
+        where ads_ID = #{adsId}
+    </update>
+
+    <delete id="deleteXinAdsById" parameterType="Long">
+        delete from xin_ads where ads_ID = #{adsId}
+    </delete>
+
+    <delete id="deleteXinAdsByIds" parameterType="String">
+        delete from xin_ads where ads_ID in 
+        <foreach item="adsId" collection="array" open="(" separator="," close=")">
+            #{adsId}
+        </foreach>
+    </delete>
+
+</mapper>
